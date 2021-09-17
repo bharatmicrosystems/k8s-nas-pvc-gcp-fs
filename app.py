@@ -1,13 +1,15 @@
 import os
 from flask import Flask
+from pathlib import Path
 import fcntl
 
 app = Flask(__name__)
+Path('/data/count').touch(exist_ok=True)
 
 def write(count):
     with open("/data/count", "w") as g:
         fcntl.flock(g, fcntl.LOCK_EX)
-        g.write(new_entry)
+        g.write(str(count))
         fcntl.flock(g, fcntl.LOCK_UN)
 
 def read():
@@ -17,7 +19,7 @@ def read():
 def get_visit_count():
     try:
         visit_count = read()
-        if visit_count is None:
+        if visit_count == "":
             visit_count = 0
         visit_count = int(visit_count) + 1
         write(visit_count)
