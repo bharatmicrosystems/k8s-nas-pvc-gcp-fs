@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fileserver-pv
+spec:
+  capacity:
+    storage: 3T
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    path: /cluster_1_fs
+    server: 10.62.49.218
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fileserver-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: ""
+  volumeName: fileserver-pv
+  resources:
+    requests:
+      storage: 3T

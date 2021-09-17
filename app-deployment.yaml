@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+      tier: frontend
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: app
+        tier: frontend
+    spec:
+      containers:
+      - name: app
+        image: bharamicrosystems/flask-visit-count:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /data
+          name: app-data
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: fileserver-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  labels:
+    app: app
+    tier: frontend
+spec:
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: app
+    tier: frontend
+  type: LoadBalancer
